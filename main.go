@@ -3,14 +3,14 @@ package main
 import (
 	"booking-app/helper"
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 const conferenceTickets int = 50
 
 var conferenceName string = "Go Conference"
 var remainingTickets uint = 50
-var bookings []string
+var bookings = make([]map[string]string, 0)
 
 func main() {
 	greetUsers()
@@ -55,8 +55,7 @@ func getFirstNames() []string {
 	//For Each Loop
 	firstNames := []string{}
 	for _, booking := range bookings { // _ is a blank identifier. It marks those variables that are not used
-		var names = strings.Fields(booking)
-		firstNames = append(firstNames, names[0])
+		firstNames = append(firstNames, booking["userFirstName"])
 	}
 	return firstNames
 }
@@ -84,7 +83,15 @@ func getUserInput() (string, string, string, uint) {
 
 func bookTicket(userTickets uint, userFirstName string, userLastName string, userEmail string) {
 	remainingTickets -= userTickets
-	bookings = append(bookings, userFirstName+" "+userLastName)
+
+	// create a map for a user
+	var userData = make(map[string]string)
+	userData["userFirstName"] = userFirstName
+	userData["userLastName"] = userLastName
+	userData["userEmail"] = userEmail
+	userData["userTickets"] = strconv.FormatUint(uint64(userTickets), 10)
+
+	bookings = append(bookings, userData)
 	fmt.Printf("Thankyou %v %v for booking %v tickets. You will receive a confirmation email at %v\n", userFirstName, userLastName, userTickets, userEmail)
 	fmt.Printf("%v tickets remaining for %v\n", remainingTickets, conferenceName)
 }
